@@ -1,10 +1,61 @@
 import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
-import {FindById, FindParents, FindChildren} from '../src/core';
+import {FindPathToId, FindById, FindParents, FindChildren} from '../src/core';
 const nodes = require('../nodes');
 
 // TODO don't use INITIAL_STATE
 describe('application logic', () => {
+
+  describe('FindPathToId', () => {
+
+    it('can find the path to a scene', () => {
+      const data = nodes.MakeBase(List.of(
+        nodes.MakeScene(1, "startup", List.of(
+          nodes.MakeNode(2, null, null)
+        )),
+        nodes.MakeScene(3, "scene_2", List.of(
+          nodes.MakeNode(4, null, List.of(
+            nodes.MakeLabelAction(5, "label_test")
+          ))
+        )),
+      ));
+      const expected1 = List.of('Scenes', 0);
+      const expected2 = List.of('Scenes', 1);
+
+      let result1 = FindPathToId(data, 1);
+      expect(result1).to.equal(expected1);
+
+      let result2 = FindPathToId(data, 3);
+      expect(result2).to.equal(expected2);
+    });
+
+    it('can find the path to a node', () => {
+      const data = nodes.MakeBase(List.of(
+        nodes.MakeScene(1, "startup", List.of(
+          nodes.MakeNode(2, null, null)
+        )),
+        nodes.MakeScene(3, "scene_2", List.of(
+          nodes.MakeNode(4, null, List.of(
+            nodes.MakeLabelAction(5, "label_test")
+          )),
+          nodes.MakeNode(5, null, null)
+        )),
+      ));
+      const expected1 = List.of('Scenes', 0, 'Nodes', 0);
+      const expected2 = List.of('Scenes', 1, 'Nodes', 0);
+      const expected3 = List.of('Scenes', 1, 'Nodes', 1);
+
+      let result1 = FindPathToId(data, 2);
+      expect(result1).to.equal(expected1);
+
+      let result2 = FindPathToId(data, 4);
+      expect(result2).to.equal(expected2);
+
+      let result3 = FindPathToId(data, 5);
+      expect(result3).to.equal(expected3);
+    });
+
+  });
 
   describe('FindById', () => {
 
@@ -16,6 +67,33 @@ describe('application logic', () => {
       let result = FindById(nodes.INITIAL_STATE, 4);
 
       expect(result).to.equal(expected);
+    });
+
+    it('can find a scene from its id', () => {
+      const data = nodes.MakeBase(List.of(
+        nodes.MakeScene(1, "startup", List.of(
+          nodes.MakeNode(2, null, null)
+        )),
+        nodes.MakeScene(3, "scene_2", List.of(
+          nodes.MakeNode(4, null, List.of(
+            nodes.MakeLabelAction(5, "label_test")
+          ))
+        )),
+      ));
+      const expected1 = nodes.MakeScene(1, "startup", List.of(
+        nodes.MakeNode(2, null, null)
+      ));
+      const expected2 = nodes.MakeScene(3, "scene_2", List.of(
+        nodes.MakeNode(4, null, List.of(
+          nodes.MakeLabelAction(5, "label_test")
+        ))
+      ));
+
+      let result1 = FindById(data, 1);
+      expect(result1).to.equal(expected1);
+
+      let result2 = FindById(data, 3);
+      expect(result2).to.equal(expected2);
     });
 
   });

@@ -1,11 +1,5 @@
 import {List, Map, fromJS} from 'immutable';
-
-export function Enum(constantsList) {
-	for (var i in constantsList) {
-		this[constantsList[i]] = i;
-	}
-	Object.freeze(this);
-}
+import {Enum} from './src/core';
 
 export const TYPE = new Enum(['BASE', 'SCENE', 'NODE', 'LINK', 'IF_LINK', 'NEXT',
 															'TEXT', 'CHOICE', 'FAKE_CHOICE', 'CREATE', 'TEMP',
