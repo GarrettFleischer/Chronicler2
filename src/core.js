@@ -9,93 +9,15 @@ export function Enum(constantsList) {
 }
 
 export function FindPathToId(state, id) {
-  let found = null;
-  let done = false;
-
-  // if(FindById(state, id) !== null)
-  // {
-    if (state.get('Type') === TYPE.BASE) {
-      // SCENES
-      state.get('Scenes').forEach((scene, i) => {
-        if (scene.get('Id') === id) {
-          found = List.of('Scenes', i);
-          done = true;
-        }
-        // NODES
-        else if (scene.get('Nodes') !== null) {
-          scene.get('Nodes').forEach((node, j) => {
-            if (node.get('Id') === id) {
-              found = List.of('Scenes', i, 'Nodes', j);
-              done = true;
-            }
-            // ACTIONS
-            else if (node.get('Actions') !== null) {
-              node.get('Actions').forEach((action, k) => {
-                if (action.get('TYPE') === TYPE.LABEL) {
-                  if (action.get('Id') === id) {
-                    found = List.of('Scenes', i, 'Nodes', j, 'Actions', k);
-                    done = true;
-                  }
-                }
-                return !done;
-              });
-            }
-            return !done;
-          });
-        }
-        return !done;
-      });
-    }
-  // }
-
-  return found;
+  return FindPathRecursive(state, id, List());
 }
 
 // Recursively iterates over the state until it finds
 // an element with a matching Id.
 // Returns the substate with the id, or null if not found.
 export function FindById(state, id) {
-  let found = null;
-
-  switch (state.get('Type'))
-  {
-    case TYPE.BASE:
-    state.get('Scenes').forEach((scene) => {
-      found = FindById(scene, id);
-      return !found;
-    });
-    break;
-
-    case TYPE.SCENE:
-    if (state.get('Id') === id) {
-      found = state;
-    } else if (state.get('Nodes') !== null) {
-      state.get('Nodes').forEach((node) => {
-        found = FindById(node, id);
-        return !found;
-      });
-    }
-    break;
-
-    case TYPE.NODE:
-    if (state.get('Id') === id) {
-      found = state;
-    } else if (state.get('Actions') !== null) {
-      state.get('Actions').forEach((action) => {
-        found = FindById(action, id);
-        return !found;
-      });
-    }
-    break;
-
-    case TYPE.LABEL:
-    if (state.get('Id') === id) {
-      found = state;
-    }
-    break;
-  }
-
-  return found;
+  const path = FindPathToId(state, id);
+  return path ? state.getIn(path) : null;
 }
 
 // Recursively iterates over the state until it finds
@@ -108,16 +30,14 @@ export function FindParents(state, id) {
   {
     case TYPE.BASE:
     state.get('Scenes').forEach((scene) => {
-      let retval = FindParents(scene, id);
-      found = found.concat(retval);
+      found = found.concat(FindParents(scene, id));
     });
     break;
 
     case TYPE.SCENE:
     if (state.get('Nodes') !== null) {
       state.get('Nodes').forEach((node) => {
-        let retval = FindParents(node, id);
-        found = found.concat(retval);
+        found = found.concat(FindParents(node, id));
       });
     }
     break;
@@ -143,7 +63,51 @@ export function FindChildren(state, id) {
   return FindChildrenRecursive(state, FindById(state, id));
 };
 
-// Helper function for FindConnections
+// Helper function for FindPathToId
+function FindPathRecursive(state, id, currentPath) {
+  let found = null;
+
+  switch (state.get('Type')) {
+    case TYPE.BASE:
+      state.get('Scenes').forEach((scene, sceneIndex) => {
+        found = FindPathRecursive(scene, id, List.of('Scenes', sceneIndex));
+        return !found;
+      });
+    break;
+
+    case TYPE.SCENE:
+      if (state.get('Id') === id) {
+        found = currentPath;
+      } else if (state.get('Nodes') !== null) {
+        state.get('Nodes').forEach((node, nodeIndex) => {
+          found = FindPathRecursive(node, id, currentPath.concat(['Nodes', nodeIndex]));
+          return !found;
+        });
+      }
+    break;
+
+    case TYPE.NODE:
+      if (state.get('Id') === id) {
+        found = currentPath;
+      } else if (state.get('Actions') !== null) {
+        state.get('Actions').forEach((action, actionIndex) => {
+          found = FindPathRecursive(action, id, currentPath.concat(['Actions', actionIndex]));
+          return !found;
+        });
+      }
+    break;
+
+    case TYPE.LABEL:
+        if (state.get('Id') === id) {
+          found = currentPath;
+        }
+    break;
+  }
+
+  return found;
+}
+
+// Helper function for FindParents
 function LinksToId(actionState, id) {
   let found = false;
 
