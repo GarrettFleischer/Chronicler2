@@ -165,10 +165,10 @@ describe('application logic', () => {
         nodes.MakeNode(2, "Start", List.of(
           nodes.MakeTextAction("A knight..."),
           nodes.MakeChoiceAction(List.of(
-            nodes.MakeLink(nodes.LINK_TYPE.NORMAL, "Fly...", 3, List.of(
+            nodes.MakeLink(nodes.LINK.NORMAL, "Fly...", 3, List.of(
               nodes.MakeSetAction("disdain", "%+", "10")
             )),
-            nodes.MakeLink(nodes.LINK_TYPE.NORMAL, "Charge...", 4, null)
+            nodes.MakeLink(nodes.LINK.NORMAL, "Charge...", 4, null)
           ))
         )),
         nodes.MakeNode(4, null, List.of(

@@ -1,12 +1,12 @@
-import {List, Map, fromJS} from 'immutable';
+import {List, Map} from 'immutable';
 import {Enum} from './src/core';
 
-export const TYPE = new Enum(['BASE', 'SCENE', 'NODE', 'LINK', 'IF_LINK', 'NEXT',
-															'TEXT', 'CHOICE', 'FAKE_CHOICE', 'CREATE', 'TEMP',
-															'SET', 'IF', 'LABEL', 'GOTO', 'GOTO_SCENE', 'GOSUB',
-															'GOSUB_SCENE']);
+export const NODE = new Enum([  'BASE', 'SCENE', 'NODE', 'LINK', 'IF_LINK', 'NEXT',
+                                'TEXT', 'CHOICE', 'FAKE_CHOICE', 'CREATE', 'TEMP',
+                                'SET', 'IF', 'LABEL', 'GOTO', 'GOTO_SCENE', 'GOSUB',
+                                'GOSUB_SCENE']);
 
-export const LINK_TYPE = new Enum(['NORMAL', 'DISABLE', 'HIDE', 'ALLOW']);
+export const LINK = new Enum(['NORMAL', 'DISABLE', 'HIDE', 'ALLOW']);
 
 export const INITIAL_STATE = MakeBase(List.of(
 	// SCENE 1
@@ -15,10 +15,10 @@ export const INITIAL_STATE = MakeBase(List.of(
 		MakeNode(2, "Start", List.of(
 			MakeTextAction("A knight..."),
 			MakeChoiceAction(List.of(
-				MakeLink(LINK_TYPE.NORMAL, "Fly...", 3, List.of(
+				MakeLink(LINK.NORMAL, "Fly...", 3, List.of(
 					MakeSetAction("disdain", "%+", "10")
 				)),
-				MakeLink(LINK_TYPE.NORMAL, "Charge...", 4, null)
+				MakeLink(LINK.NORMAL, "Charge...", 4, null)
 			))
 		)),
 		// NODE 3
@@ -46,73 +46,73 @@ export const INITIAL_STATE = MakeBase(List.of(
 ));
 
 export function MakeBase(scenes) {
-	return Map({Type: TYPE.BASE, Scenes: scenes});
+	return Map({Type: NODE.BASE, Scenes: scenes});
 }
 
 export function MakeScene(id, name, nodes) {
-	return Map({Type: TYPE.SCENE, Id: id, Name: name, Nodes: nodes});
+	return Map({Type: NODE.SCENE, Id: id, Name: name, Nodes: nodes});
 }
 
 export function MakeNode(id, label, actions) {
-	return Map({Type: TYPE.NODE, Id: id, Label: label, Actions: actions});
+	return Map({Type: NODE.NODE, Id: id, Label: label, Actions: actions});
 }
 
 export function MakeLink(linkType, text, linkId, actions) {
-	return Map({Type: TYPE.LINK, LinkType: linkType, Text: text, LinkId: linkId, Actions: actions});
+	return Map({Type: NODE.LINK, LinkType: linkType, Text: text, LinkId: linkId, Actions: actions});
 }
 
 export function MakeIfLink(expr, text, linkId, actions) {
-	return Map({Type: TYPE.IF_LINK, Expr: expr, Text: text, LinkId: linkId, Actions: actions});
+	return Map({Type: NODE.IF_LINK, Expr: expr, Text: text, LinkId: linkId, Actions: actions});
 }
 
 export function MakeNextAction(text, linkId) {
-	return Map({Type: TYPE.NEXT, Text: text, LinkId: linkId});
+	return Map({Type: NODE.NEXT, Text: text, LinkId: linkId});
 }
 
 export function MakeTextAction(text) {
-	return Map({Type: TYPE.TEXT, Text: text});
+	return Map({Type: NODE.TEXT, Text: text});
 }
 
 export function MakeChoiceAction(links) {
-	return Map({Type: TYPE.CHOICE, Links: links});
+	return Map({Type: NODE.CHOICE, Links: links});
 }
 
 export function MakeFakeChoice(choices, linkId) {
-	return Map({Type: TYPE.FAKE_CHOICE, Choices: choices, LinkId: linkId});
+	return Map({Type: NODE.FAKE_CHOICE, Choices: choices, LinkId: linkId});
 }
 
 export function MakeCreateAction(name) {
-	return Map({Type: TYPE.CREATE, Name: name});
+	return Map({Type: NODE.CREATE, Name: name});
 }
 
 export function MakeTempAction(name) {
-	return Map({Type: TYPE.TEMP, Name: name});
+	return Map({Type: NODE.TEMP, Name: name});
 }
 
 export function MakeSetAction(name, op, expr) {
-	return Map({Type: TYPE.SET, Name: name, Op: op, Expr: expr});
+	return Map({Type: NODE.SET, Name: name, Op: op, Expr: expr});
 }
 
 export function MakeIfAction(expr, actions, elses) {
-	return Map({Type: TYPE.IF, Name: name, Elses: elses});
+	return Map({Type: NODE.IF, Expr, expr, Actions: actions, Elses: elses});
 }
 
 export function MakeLabelAction(id, label) {
-	return Map({Type: TYPE.LABEL, Id: id, Label: label});
+	return Map({Type: NODE.LABEL, Id: id, Label: label});
 }
 
 export function MakeGoto(linkId) {
-	return Map({Type: TYPE.GOTO, LinkId: linkId});
+	return Map({Type: NODE.GOTO, LinkId: linkId});
 }
 
 export function MakeGotoScene(sceneId, linkId) {
-	return Map({Type: TYPE.GOTO_SCENE, SceneId: sceneId, LinkId: linkId});
+	return Map({Type: NODE.GOTO_SCENE, SceneId: sceneId, LinkId: linkId});
 }
 
 export function MakeGosub(linkId) {
-	return Map({Type: TYPE.GOSUB, LinkId: linkId});
+	return Map({Type: NODE.GOSUB, LinkId: linkId});
 }
 
 export function MakeGosubScene(sceneId, linkId) {
-	return Map({Type: TYPE.GOSUB_SCENE, SceneId: sceneId, LinkId: linkId});
+	return Map({Type: NODE.GOSUB_SCENE, SceneId: sceneId, LinkId: linkId});
 }
