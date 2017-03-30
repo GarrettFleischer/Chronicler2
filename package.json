@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js \"test/**/*@(.js|.jsx)\"",
     "test-dbg": "mocha --debug-brk --inspect --compilers js:babel-core/register --require ./test/test_helper.js \"test/**/*@(.js|.jsx)\"",
-    "start": "electron .",
-    "compile": "babel --presets es2015,stage-0 -d lib/ src/"
+    "start": "npm run compile && electron .",
+    "compile": "babel src --out-dir dist --copy-files"
   },
   "keywords": [],
   "author": "",

@@ -13,12 +13,13 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 1280, height: 720});
 
-    // const startUrl = process.env.ELECTRON_START_URL || url.format({
-    //         pathname: path.join(__dirname, '/../build/index.html'),
-    //         protocol: 'file:',
-    //         slashes: true
-    //     });
-    mainWindow.loadURL('http://localhost:8080/#/');
+    const startUrl = url.format({
+            pathname: path.join(__dirname, '/../dist/index.html'),
+            protocol: 'file:',
+            slashes: true
+        });
+    mainWindow.loadURL(startUrl);
+    // mainWindow.loadURL('http://localhost:8080/#/');
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();

@@ -19,16 +19,24 @@ store.dispatch({
   }
 });
 
-const routes = (
-  <Route component={App}>
-    <Route path="/results" component={ResultsContainer} />
-    <Route path="/" component={VotingContainer} />
-  </Route>
-);
+// const routes = (
+//   <Route component={App}>
+//     <Route path="/results" component={ResultsContainer} />
+//     <Route path="/" component={VotingContainer} />
+//   </Route>
+// );
+
+// ReactDom.render(
+//   <Provider store={store}>
+//     <Router history={hashHistory}>{routes}</Router>
+//   </Provider>,
+//   document.getElementById('app')
+// );
+
 
 ReactDom.render(
-  <Provider store={store}>
-    <Router history={hashHistory}>{routes}</Router>
-  </Provider>,
+    <Provider store={store}>
+      <VotingContainer/>
+    </Provider>,
   document.getElementById('app')
 );
