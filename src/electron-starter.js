@@ -7,18 +7,17 @@ const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+export let mainWindow;
 
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 1280, height: 720});
 
-    const startUrl = url.format({
-            pathname: path.join(__dirname, '/../dist/index.html'),
-            protocol: 'file:',
-            slashes: true
-        });
-    mainWindow.loadURL(startUrl);
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '/../dist/index.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
     // mainWindow.loadURL('http://localhost:8080/#/');
 
     // Open the DevTools.

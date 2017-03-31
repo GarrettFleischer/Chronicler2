@@ -1,5 +1,5 @@
 import {List, Map} from 'immutable';
-import {Enum} from './src/core';
+import {Enum} from './core';
 
 export const NODE = new Enum([  'BASE', 'SCENE', 'NODE', 'LINK', 'IF_LINK', 'NEXT',
                                 'TEXT', 'CHOICE', 'FAKE_CHOICE', 'CREATE', 'TEMP',
@@ -54,7 +54,7 @@ export function MakeScene(id, name, nodes) {
 }
 
 export function MakeNode(id, label, actions) {
-	return Map({Type: NODE.NODE, Id: id, Label: label, Actions: actions});
+	return Map({Type: NODE.NODE, X: 0, Y: 0, Id: id, Label: label, Actions: actions});
 }
 
 export function MakeLink(linkType, text, linkId, actions) {
