@@ -291,7 +291,7 @@ describe('application logic', () => {
 
         it('sets the correct positions for nodes', () => {
             const data = Map({
-                Scenes: nodes.MakeScene(1, "startup", List.of(
+                Scenes: List.of(nodes.MakeScene(1, "startup", List.of(
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
@@ -313,37 +313,42 @@ describe('application logic', () => {
                     )),
                     nodes.MakeNode(8, "node_8", null),
                     nodes.MakeNode(9, "node_9", null)
-                ))
-            })
+                )))
+            });
             const width = 50;
             const height = 50;
             const expected = Map({
-                Scenes: nodes.MakeScene(1, "startup", List.of(
+                Scenes: List.of(nodes.MakeScene(1, "startup", List.of(
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
-                    ), 4 * width),
+                    )),
+
                     nodes.MakeNode(3, "node_3", List.of(
                         nodes.MakeGoto(5),
                         nodes.MakeGoto(6)
-                    ), (4 - 2) * width, height),
+                    ), (0 - 2) * width, height),
                     nodes.MakeNode(4, "node_4", List.of(
                         nodes.MakeGoto(7),
                         nodes.MakeGoto(8)
-                    ), (4 + 2) * width, height),
+                    ), (0 + 2) * width, height),
+
                     nodes.MakeNode(5, "node_5", List.of(
                         nodes.MakeGoto(9)
-                    ), (2 - 1) * width, 2 * height),
-                    nodes.MakeNode(6, "node_6", null, (2 + 1) * width, 2 * height),
+                    ), (-2 - 1) * width, 2 * height),
+                    nodes.MakeNode(6, "node_6", null, (-2 + 1) * width, 2 * height),
+
                     nodes.MakeNode(7, "node_7", List.of(
                         nodes.MakeGoto(9)
-                    ), (6 - 1) * width, 2 * height),
-                    nodes.MakeNode(8, "node_8", null, (6 + 1) * width, 2 * height),
-                    nodes.MakeNode(9, "node_9", null, ((1 + 5) / 2) * width, 3 * height)
-                ))
-            })
+                    ), (2 - 1) * width, 2 * height),
+                    nodes.MakeNode(8, "node_8", null, (2 + 1) * width, 2 * height),
 
-            expect(CalculateCoords(data, width, height)).to.equal(expected);
+                    nodes.MakeNode(9, "node_9", null, ((-3 + 1) / 2) * width, 3 * height)
+                )))
+            });
+
+            const result = CalculateCoords(data, width);
+            expect(result).to.equal(expected);
         });
 
     });

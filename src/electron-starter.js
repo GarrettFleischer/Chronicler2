@@ -7,7 +7,7 @@ const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-export let mainWindow;
+let mainWindow;
 
 function createWindow() {
     // Create the browser window.
