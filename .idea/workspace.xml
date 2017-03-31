@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4e04f05-db5e-44ad-a03b-7377e6f7f26d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/components/Node.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/electron-wait-react.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core.js" afterPath="$PROJECT_DIR$/src/core.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/electron-starter.js" afterPath="$PROJECT_DIR$/src/electron-starter.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/index.css" afterPath="$PROJECT_DIR$/src/index.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/nodes.js" afterPath="$PROJECT_DIR$/src/nodes.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/core_spec.js" afterPath="$PROJECT_DIR$/test/core_spec.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/nodes.js" afterPath="$PROJECT_DIR$/src/nodes.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -24,28 +19,6 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="core.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
-              <folding>
-                <element signature="n#!!block;n#Enum#0" expanded="false" />
-                <element signature="n#!!block;n#FindPathToId#0" expanded="false" />
-                <element signature="n#!!doc;n#FindById#0" expanded="false" />
-                <element signature="n#!!block;n#FindById#0" expanded="false" />
-                <element signature="n#!!block;n#FindParents#0" expanded="false" />
-                <element signature="n#!!block;n#FindChildren#0" expanded="false" />
-                <element signature="n#!!block;n#FindSceneContainingId#0" expanded="false" />
-                <element signature="n#!!block;n#FindPathRecursive#0" expanded="false" />
-                <element signature="n#!!doc;n#LinksToId#0" expanded="false" />
-                <element signature="n#!!block;n#LinksToId#0" expanded="false" />
-                <element signature="n#!!block;n#FindChildrenRecursive#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="electron-starter.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/electron-starter.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -56,50 +29,70 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="core.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/core.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="304">
+              <caret line="106" column="12" lean-forward="false" selection-start-line="106" selection-start-column="12" selection-end-line="106" selection-end-column="12" />
+              <folding>
+                <element signature="n#!!block;n#Enum#0" expanded="false" />
+                <element signature="n#!!block;n#FindPathToId#0" expanded="false" />
+                <element signature="n#!!doc;n#FindById#0" expanded="false" />
+                <element signature="n#!!block;n#FindById#0" expanded="false" />
+                <element signature="n#!!block;n#FindParents#0" expanded="false" />
+                <element signature="n#!!block;n#FindChildren#0" expanded="false" />
+                <element signature="n#!!block;n#FindSceneContainingId#0" expanded="false" />
+                <element signature="n#!!doc;n#CalculateWidth#0" expanded="false" />
+                <element signature="n#!!doc;n#LinksToId#0" expanded="false" />
+                <element signature="n#!!block;n#LinksToId#0" expanded="false" />
+                <element signature="n#!!block;n#FindChildrenRecursive#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="core_spec.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/core_spec.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="296" column="45" lean-forward="false" selection-start-line="296" selection-start-column="45" selection-end-line="296" selection-end-column="45" />
+            <state relative-caret-position="609">
+              <caret line="349" column="0" lean-forward="true" selection-start-line="349" selection-start-column="0" selection-end-line="349" selection-end-column="0" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
-                <element signature="e#388#912#0" expanded="false" />
-                <element signature="e#965#1682#0" expanded="false" />
-                <element signature="e#1734#2695#0" expanded="false" />
-                <element signature="e#2748#3715#0" expanded="false" />
-                <element signature="e#3808#4328#0" expanded="false" />
-                <element signature="e#4381#5332#0" expanded="false" />
-                <element signature="e#5384#5628#0" expanded="false" />
-                <element signature="e#5681#5866#0" expanded="false" />
-                <element signature="e#5971#6056#0" expanded="false" />
-                <element signature="e#6197#7023#0" expanded="false" />
-                <element signature="e#7197#7284#0" expanded="false" />
-                <element signature="e#7349#7839#0" expanded="false" />
-                <element signature="e#7950#8484#0" expanded="false" />
-                <element signature="e#8541#9541#0" expanded="false" />
-                <element signature="e#9599#10769#0" expanded="false" />
+                <element signature="e#424#948#0" expanded="false" />
+                <element signature="e#1001#1718#0" expanded="false" />
+                <element signature="e#1770#2731#0" expanded="false" />
+                <element signature="e#2784#3751#0" expanded="false" />
+                <element signature="e#3844#4364#0" expanded="false" />
+                <element signature="e#4417#5368#0" expanded="false" />
+                <element signature="e#5420#5664#0" expanded="false" />
+                <element signature="e#5717#5902#0" expanded="false" />
+                <element signature="e#6007#6092#0" expanded="false" />
+                <element signature="e#6233#7059#0" expanded="false" />
+                <element signature="e#7233#7320#0" expanded="false" />
+                <element signature="e#7986#8520#0" expanded="false" />
+                <element signature="e#8577#9577#0" expanded="false" />
+                <element signature="e#9635#10805#0" expanded="false" />
+                <element signature="e#10947#11951#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Voting_spec.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/components/Voting_spec.js">
+      <file leaf-file-name="nodes.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/nodes.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+              <caret line="1" column="28" lean-forward="true" selection-start-line="1" selection-start-column="28" selection-end-line="1" selection-end-column="28" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Node.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Node.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/Node.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="371">
-              <caret line="30" column="3" lean-forward="false" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="3" />
+            <state relative-caret-position="527">
+              <caret line="33" column="33" lean-forward="true" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
               <folding>
                 <element signature="e#44#70#0" expanded="true" />
               </folding>
@@ -148,12 +141,12 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/index.html" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/src/nodes.js" />
         <option value="$PROJECT_DIR$/src/components/Node.js" />
         <option value="$PROJECT_DIR$/src/electron-starter.js" />
-        <option value="$PROJECT_DIR$/src/core.js" />
-        <option value="$PROJECT_DIR$/test/core_spec.js" />
         <option value="$PROJECT_DIR$/src/index.css" />
+        <option value="$PROJECT_DIR$/src/nodes.js" />
+        <option value="$PROJECT_DIR$/test/core_spec.js" />
+        <option value="$PROJECT_DIR$/src/core.js" />
       </list>
     </option>
   </component>
@@ -418,7 +411,7 @@
       <option name="presentableId" value="Default" />
       <updated>1490848803310</updated>
       <workItem from="1490848804931" duration="8349000" />
-      <workItem from="1490859757013" duration="7517000" />
+      <workItem from="1490859757013" duration="10859000" />
     </task>
     <servers />
   </component>
@@ -455,7 +448,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15866000" />
+    <option name="totallyTimeSpent" value="19208000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -488,7 +481,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -662,16 +655,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/components/Voting_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Voting.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -698,59 +681,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/nodes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="65" column="1" lean-forward="false" selection-start-line="65" selection-start-column="1" selection-end-line="65" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/core_spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="296" column="45" lean-forward="false" selection-start-line="296" selection-start-column="45" selection-end-line="296" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#44#0" expanded="true" />
-            <element signature="e#388#912#0" expanded="false" />
-            <element signature="e#965#1682#0" expanded="false" />
-            <element signature="e#1734#2695#0" expanded="false" />
-            <element signature="e#2748#3715#0" expanded="false" />
-            <element signature="e#3808#4328#0" expanded="false" />
-            <element signature="e#4381#5332#0" expanded="false" />
-            <element signature="e#5384#5628#0" expanded="false" />
-            <element signature="e#5681#5866#0" expanded="false" />
-            <element signature="e#5971#6056#0" expanded="false" />
-            <element signature="e#6197#7023#0" expanded="false" />
-            <element signature="e#7197#7284#0" expanded="false" />
-            <element signature="e#7349#7839#0" expanded="false" />
-            <element signature="e#7950#8484#0" expanded="false" />
-            <element signature="e#8541#9541#0" expanded="false" />
-            <element signature="e#9599#10769#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!block;n#Enum#0" expanded="false" />
-            <element signature="n#!!block;n#FindPathToId#0" expanded="false" />
-            <element signature="n#!!doc;n#FindById#0" expanded="false" />
-            <element signature="n#!!block;n#FindById#0" expanded="false" />
-            <element signature="n#!!block;n#FindParents#0" expanded="false" />
-            <element signature="n#!!block;n#FindChildren#0" expanded="false" />
-            <element signature="n#!!block;n#FindSceneContainingId#0" expanded="false" />
-            <element signature="n#!!block;n#FindPathRecursive#0" expanded="false" />
-            <element signature="n#!!doc;n#LinksToId#0" expanded="false" />
-            <element signature="n#!!block;n#LinksToId#0" expanded="false" />
-            <element signature="n#!!block;n#FindChildrenRecursive#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/index.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -759,12 +689,75 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/components/Voting_spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Node.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="30" column="3" lean-forward="false" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="3" />
+        <state relative-caret-position="527">
+          <caret line="33" column="33" lean-forward="true" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
           <folding>
             <element signature="e#44#70#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/core_spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="349" column="0" lean-forward="true" selection-start-line="349" selection-start-column="0" selection-end-line="349" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+            <element signature="e#424#948#0" expanded="false" />
+            <element signature="e#1001#1718#0" expanded="false" />
+            <element signature="e#1770#2731#0" expanded="false" />
+            <element signature="e#2784#3751#0" expanded="false" />
+            <element signature="e#3844#4364#0" expanded="false" />
+            <element signature="e#4417#5368#0" expanded="false" />
+            <element signature="e#5420#5664#0" expanded="false" />
+            <element signature="e#5717#5902#0" expanded="false" />
+            <element signature="e#6007#6092#0" expanded="false" />
+            <element signature="e#6233#7059#0" expanded="false" />
+            <element signature="e#7233#7320#0" expanded="false" />
+            <element signature="e#7986#8520#0" expanded="false" />
+            <element signature="e#8577#9577#0" expanded="false" />
+            <element signature="e#9635#10805#0" expanded="false" />
+            <element signature="e#10947#11951#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/nodes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="1" column="28" lean-forward="true" selection-start-line="1" selection-start-column="28" selection-end-line="1" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="106" column="12" lean-forward="false" selection-start-line="106" selection-start-column="12" selection-end-line="106" selection-end-column="12" />
+          <folding>
+            <element signature="n#!!block;n#Enum#0" expanded="false" />
+            <element signature="n#!!block;n#FindPathToId#0" expanded="false" />
+            <element signature="n#!!doc;n#FindById#0" expanded="false" />
+            <element signature="n#!!block;n#FindById#0" expanded="false" />
+            <element signature="n#!!block;n#FindParents#0" expanded="false" />
+            <element signature="n#!!block;n#FindChildren#0" expanded="false" />
+            <element signature="n#!!block;n#FindSceneContainingId#0" expanded="false" />
+            <element signature="n#!!doc;n#CalculateWidth#0" expanded="false" />
+            <element signature="n#!!doc;n#LinksToId#0" expanded="false" />
+            <element signature="n#!!block;n#LinksToId#0" expanded="false" />
+            <element signature="n#!!block;n#FindChildrenRecursive#0" expanded="false" />
           </folding>
         </state>
       </provider>

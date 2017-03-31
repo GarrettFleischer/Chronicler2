@@ -53,8 +53,8 @@ export function MakeScene(id, name, nodes) {
 	return Map({Type: NODE.SCENE, Id: id, Name: name, Nodes: nodes});
 }
 
-export function MakeNode(id, label, actions) {
-	return Map({Type: NODE.NODE, X: 0, Y: 0, Id: id, Label: label, Actions: actions});
+export function MakeNode(id, label, actions, x = 0, y = 0) {
+	return Map({Type: NODE.NODE, X: x, Y: y, Id: id, Label: label, Actions: actions});
 }
 
 export function MakeLink(linkType, text, linkId, actions) {

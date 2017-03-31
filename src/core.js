@@ -98,14 +98,35 @@ export function FindSceneContainingId(state, id) {
     return found;
 }
 
-export function CalculateCoords(state) {
+export function CalculateCoords(state, width, height) {
     let newState = state;
+    let visited = List();
 
     state.get('Scenes').forEach((scene) => {
-
-    })
+        scene.get('Nodes').forEach((node) => {
+            
+        });
+    });
 
     return newState;
+}
+
+/**
+ * @return {number}
+ */
+function CalculateWidth(state, substate) {
+    let width = 0;
+
+    const children = FindChildren(state, substate.get('Id'));
+    if(children.length > 1) {
+        children.forEach((child) => {
+            const parents = FindParents(state, child.get('Id'));
+            if(parents.length === 1)
+                width += CalculateWidth(state, child);
+        });
+    }
+
+    return width;
 }
 
 // Helper function for FindPathToId
