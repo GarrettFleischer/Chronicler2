@@ -290,8 +290,8 @@ describe('application logic', () => {
     describe('CalculateCoords', () => {
 
         it('sets the correct positions for nodes', () => {
-            const data = Map({
-                Scenes: List.of(nodes.MakeScene(1, "startup", List.of(
+            const data = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
@@ -314,24 +314,24 @@ describe('application logic', () => {
                     nodes.MakeNode(8, "node_8", null),
                     nodes.MakeNode(9, "node_9", null)
                 )))
-            });
+            );
             const width = 50;
             const height = 50;
-            const expected = Map({
-                Scenes: List.of(nodes.MakeScene(1, "startup", List.of(
+            const expected = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
-                    )),
+                    ), Math.round(2 * width), 0),
 
                     nodes.MakeNode(3, "node_3", List.of(
                         nodes.MakeGoto(5),
                         nodes.MakeGoto(6)
-                    ), (0 - 2) * width, height),
+                    ), Math.round(7 / 3 * width), Math.round(height)),
                     nodes.MakeNode(4, "node_4", List.of(
                         nodes.MakeGoto(7),
                         nodes.MakeGoto(8)
-                    ), (0 + 2) * width, height),
+                    ), Math.round((4 / 3) * width), Math.round(height)),
 
                     nodes.MakeNode(5, "node_5", List.of(
                         nodes.MakeGoto(9)
@@ -344,10 +344,9 @@ describe('application logic', () => {
                     nodes.MakeNode(8, "node_8", null, (2 + 1) * width, 2 * height),
 
                     nodes.MakeNode(9, "node_9", null, ((-3 + 1) / 2) * width, 3 * height)
-                )))
-            });
+                ))));
 
-            const result = CalculateCoords(data, width);
+            const result = CalculateCoords(data, width, height);
             expect(result).to.equal(expected);
         });
 

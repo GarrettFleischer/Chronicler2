@@ -1,4 +1,4 @@
-import {List, Map, fromJS} from 'immutable';
+import {List, Stack} from 'immutable';
 import {NODE, LINK} from './nodes'
 
 export function Enum(constantsList) {
@@ -98,108 +98,158 @@ export function FindSceneContainingId(state, id) {
     return found;
 }
 
-export function CalculateCoords(state, minDist) {
-    const friction = 0.1;
-    const threshold = 0.1;
+export function CalculateCoords(state, colWidth, rowHeight) {
     let newState = state;
-    let visited = List();
-    let done = false;
 
-    while(!done) {
-        done = true;
-        state.get('Scenes').forEach((scene) => {
-            scene.get('Nodes').forEach((node) => {
-                if (!visited.contains(node.get('Id'))) {
-                    visited = visited.push(node.get('Id'));
-                    const parents = FindParents(state, node.get('Id'));
-                    const children = FindChildren(state, node.get('Id'));
-                    let x = node.get('X');
-                    let y = node.get('Y');
-                    const ix = x;
-                    const iy = y;
+    newState.get('Scenes').forEach((scene) => {
+        const startNode = scene.get('Nodes').get(0);
 
-                    parents.forEach((child) => {
-                        const cx = child.get('X');
-                        const cy = child.get('Y');
-                        const dx = (cx - x) + Math.sign(cx - x) * minDist;
-                        const dy = (cy - y) + Math.sign(cy - y) * minDist;
-                        x += dx * friction;
-                        y += dy * friction;
-                    });
-                    children.forEach((child) => {
-                        const cx = child.get('X');
-                        const cy = child.get('Y');
-                        const dx = (cx - x) + Math.sign(cx - x) * minDist;
-                        const dy = (cy - y) + Math.sign(cy - y) * minDist;
-                        x += dx * friction;
-                        y += dy * friction;
-                    });
+        let rows = BuildRows(state, startNode.get('Id'));
+        const width = MaxWidth(rows);
 
-                    if (Math.abs(ix - x) > threshold || Math.abs(iy - y) > threshold)
-                        done = false;
-
-                    const path = FindPathToId(state, node.get('Id'));
-                    newState = newState.setIn(path.push('X'), x);
-                    newState = newState.setIn(path.push('Y'), y);
-                }
+        rows.forEach((row, y) => {
+            row.forEach((id, x) => {
+                const path = FindPathToId(state, id);
+                newState = newState.setIn(path.push('X'), Math.round((x + (width / (row.size + 1))) * colWidth));
+                newState = newState.setIn(path.push('Y'), Math.round(y * rowHeight));
             });
         });
-    }
+    });
 
     return newState;
 }
 
-// export function CalculateCoords(state, colWidth, rowHeight, offset = 0) {
-//     let newState = state;
-//     let visited = List();
-//
-//     state.get('Scenes').forEach((scene) => {
-//         scene.get('Nodes').forEach((node) => {
-//             if (!visited.contains(node.get('Id'))) {
-//                 visited = visited.push(node.get('Id'));
-//                 const children = FindChildren(state, node.get('Id'));
-//                 const width = CalculateWidth(state, node);
-//                 const path = FindPathToId(node.get('Id'));
-//                 newState.setIn(path.push('X'), )
-//             }
-//         });
-//     });
-//
-//     return newState;
-// }
+function BuildRows(state, id) {
+    let rows = List();
 
-/**
- * @return {boolean}
- */
-function ContainsLoop(state, id, substate = null, visited = List()) {
-    const children = FindChildren(state, substate ? substate.get('Id') : id);
-    children.forEach((child) => {
-        if(child.get('Id') === id)
-            return true;
-        if(!visited.contains(substate.get('Id')))
-            return ContainsLoop(state, id, child, visited.push(substate.get('Id')));
-    });
+    let stack = Stack.of({Id: id, Row: 0});
+    let visited = List();
 
-    return false;
+    while (stack.size) {
+        const top = stack.peek();
+        stack = stack.pop();
+
+        if(!visited.contains(top.Id)) {
+            visited = visited.push(top.Id);
+
+            while (top.Row >= rows.size) rows = rows.push(List());
+            let currentRow = rows.get(top.Row);
+            currentRow = currentRow.push(top.Id);
+            rows = rows.set(top.Row, currentRow);
+
+            const children = FindChildren(state, top.Id);
+            children.forEach((child) => {
+                stack = stack.push({Id: child.get('Id'), Row: top.Row + 1});
+            });
+        }
+    }
+
+    return HandleMultipleParents(state, rows);
+}
+
+function HandleMultipleParents(state, rows) {
+    let newRows = rows;
+    let done = false;
+    let visited = List();
+
+    // reset iteration whenever a change is made
+    while (!done) {
+        done = true;
+
+        for (let y = 0; y < newRows.size && done; ++y) {
+            let row = newRows.get(y);
+
+            for (let x = 0; x < row.size && done; ++x) {
+                const currentId = row.get(x);
+
+                // ignore this node if already processed
+                if (!visited.contains(currentId)) {
+                    visited = visited.push(currentId);
+                    // calc max parent row + 1
+                    const parents = FindParents(state, currentId);
+                    let newY = y;
+                    parents.forEach((parent) => {
+                        if (parent.get('Id') !== currentId)
+                            newY = Math.max(newY, RowOf(newRows, parent.get('Id')));
+                    });
+                    newY += 1;
+
+                    if (newY !== y) {
+                        done = false;
+                        while (newY >= newRows.size) newRows = newRows.push(List());
+                        let newRow = newRows.get(newY).push(currentId);
+                        row = row.delete(x);
+                        newRows = newRows.set(y, row);
+                        newRows = newRows.set(newY, newRow);
+                    }
+                }
+            }
+        }
+    }
+
+
+    return rows;
 }
 
 /**
  * @return {number}
  */
-function CalculateWidth(state, substate) {
+function RowOf(rows, id) {
+    for (let y = 0; y < rows.size; ++y) {
+        const row = rows.get(y);
+        for (let x = 0; x < row.size; ++x) {
+            if(row.get(x) === id)
+                return y;
+        }
+    }
+
+    return -1;
+}
+
+/**
+ * @return {number}
+ */
+function MaxWidth(rows) {
     let width = 0;
 
-    const children = FindChildren(state, substate.get('Id'));
-    if(children.length > 1) {
-        children.forEach((child) => {
-            const parents = FindParents(state, child.get('Id'));
-            if(parents.length === 1)
-                width += CalculateWidth(state, child);
-        });
-    }
+    for(let y = 0; y < rows.size; ++y)
+        width = Math.max(width, rows.get(y).size);
 
     return width;
 }
+
+// /**
+//  * @return {boolean}
+//  */
+// function ContainsLoop(state, id, substate = null, visited = List()) {
+//     const children = FindChildren(state, substate ? substate.get('Id') : id);
+//     children.forEach((child) => {
+//         if(child.get('Id') === id)
+//             return true;
+//         if(!visited.contains(substate.get('Id')))
+//             return ContainsLoop(state, id, child, visited.push(substate.get('Id')));
+//     });
+//
+//     return false;
+// }
+//
+// /**
+//  * @return {number}
+//  */
+// function CalculateWidth(state, substate) {
+//     let width = 0;
+//
+//     const children = FindChildren(state, substate.get('Id'));
+//     if(children.size > 1) {
+//         children.forEach((child) => {
+//             const parents = FindParents(state, child.get('Id'));
+//             if(parents.length === 1)
+//                 width += CalculateWidth(state, child);
+//         });
+//     }
+//
+//     return width;
+// }
 
 // Helper function for FindPathToId
 function FindPathRecursive(state, id, currentPath) {
@@ -281,35 +331,44 @@ function LinksToId(actionState, id) {
 function FindChildrenRecursive(state, substate) {
     let found = List();
 
-    if(substate) {
-        switch (substate.get('Type')) {
-            case NODE.NODE:
-                if (substate.get('Actions') !== null) {
-                    substate.get('Actions').forEach((action) => {
-                        found = found.concat(FindChildrenRecursive(state, action));
-                    });
-                }
-                break;
+    switch (substate.get('Type')) {
+        case NODE.NODE:
+            if (substate.get('Actions') !== null) {
+                substate.get('Actions').forEach((action) => {
+                    found = found.concat(FindChildrenRecursive(state, action));
+                });
+            }
+            break;
 
-            case NODE.CHOICE:
-                if (substate.get('Links') !== null) {
-                    substate.get('Links').forEach((link) => {
-                        const linkedNode = FindById(state, link.get('LinkId'));
-                        if (linkedNode) found = found.push(linkedNode);
-                    });
-                }
-                break;
+        case NODE.CHOICE:
+            if (substate.get('Links') !== null) {
+                substate.get('Links').forEach((link) => {
+                    const linkedNode = FindById(state, link.get('LinkId'));
+                    if (linkedNode) found = found.push(linkedNode);
+                });
+            }
+            break;
 
-            case NODE.GOTO:
-            case NODE.GOTO_SCENE:
-            case NODE.GOSUB:
-            case NODE.GOSUB_SCENE:
-            case NODE.NEXT:
-                const linkedNode = FindById(state, substate.get('LinkId'));
-                if (linkedNode) found = found.push(linkedNode);
-                break;
-        }
+        case NODE.GOTO:
+        case NODE.GOTO_SCENE:
+        case NODE.GOSUB:
+        case NODE.GOSUB_SCENE:
+        case NODE.NEXT:
+            const linkedNode = FindById(state, substate.get('LinkId'));
+            if (linkedNode) found = found.push(linkedNode);
+            break;
     }
 
     return found;
 }
+
+
+// function sign(x) {
+//     return x < 0 ? -1 : 1;
+// }
+//
+// function getRandomInt(min, max) {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//     return Math.floor(Math.random() * (max - min)) + min;
+// }
