@@ -120,11 +120,13 @@ export function CalculateCoords(state, colWidth, rowHeight) {
     return newState;
 }
 
+// Iteratively searches over the state starting at the given id.
+// Returns true if there is a path that loops back to the given id.
 /**
  * @return {boolean}
  */
-export function ContainsLoop(state, id) {
-    let stack = Stack.of(id);
+export function ContainsLoop(state, nodeId) {
+    let stack = Stack.of(nodeId);
     let visited = List();
 
     while (stack.size) {
@@ -136,7 +138,7 @@ export function ContainsLoop(state, id) {
 
             const children = FindChildren(state, top);
             for (let i = 0; i < children.size; ++i) {
-                if (children.getIn([i, 'Id']) === id)
+                if (children.getIn([i, 'Id']) === nodeId)
                     return true;
 
                 stack = stack.push(children.getIn([i, 'Id']));
@@ -147,10 +149,11 @@ export function ContainsLoop(state, id) {
     return false;
 }
 
-function BuildRows(state, id) {
+// Helper function for CalculateCoords
+function BuildRows(state, nodeId) {
     let rows = List();
 
-    let stack = Stack.of({Id: id, Row: 0});
+    let stack = Stack.of({Id: nodeId, Row: 0});
     let visited = List();
 
     while (stack.size) {
@@ -175,6 +178,7 @@ function BuildRows(state, id) {
     return HandleMultipleParents(state, rows);
 }
 
+// Helper function for BuildRows
 function HandleMultipleParents(state, rows) {
     let newRows = rows;
     let done = false;
@@ -220,14 +224,15 @@ function HandleMultipleParents(state, rows) {
     return newRows;
 }
 
+// Helper function for BuildRows
 /**
  * @return {number}
  */
-function RowOf(rows, id) {
+function RowOf(rows, nodeId) {
     for (let y = 0; y < rows.size; ++y) {
         const row = rows.get(y);
         for (let x = 0; x < row.size; ++x) {
-            if(row.get(x) === id)
+            if(row.get(x) === nodeId)
                 return y;
         }
     }
@@ -235,6 +240,7 @@ function RowOf(rows, id) {
     return -1;
 }
 
+// Helper function for BuildRows
 /**
  * @return {number}
  */
@@ -246,26 +252,6 @@ function MaxWidth(rows) {
 
     return width;
 }
-
-
-//
-// /**
-//  * @return {number}
-//  */
-// function CalculateWidth(state, substate) {
-//     let width = 0;
-//
-//     const children = FindChildren(state, substate.get('Id'));
-//     if(children.size > 1) {
-//         children.forEach((child) => {
-//             const parents = FindParents(state, child.get('Id'));
-//             if(parents.length === 1)
-//                 width += CalculateWidth(state, child);
-//         });
-//     }
-//
-//     return width;
-// }
 
 // Helper function for FindPathToId
 function FindPathRecursive(state, id, currentPath) {

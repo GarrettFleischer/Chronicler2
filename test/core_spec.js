@@ -71,6 +71,7 @@ describe('application logic', () => {
             expect(result3).to.equal(expected3);
         });
 
+        // TODO remove labels
         it('can find the path to a label', () => {
             const data = nodes.MakeBase(List.of(
                 nodes.MakeScene(1, "startup", List.of(
@@ -150,6 +151,7 @@ describe('application logic', () => {
             expect(result).to.equal(expected);
         });
 
+        // TODO remove labels
         it('can find a label from its id', () => {
             const expected = nodes.MakeLabelAction(8, "middle");
             const result = FindById(nodes.INITIAL_STATE, 8);
