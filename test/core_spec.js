@@ -1,7 +1,7 @@
 import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {FindPathToId, FindById, FindParents, FindChildren, FindSceneContainingId, CalculateCoords} from '../src/core';
+import {FindPathToId, FindById, FindParents, FindChildren, FindSceneContainingId, CalculateCoords, ContainsLoop} from '../src/core';
 const nodes = require('../src/nodes');
 
 // TODO don't use INITIAL_STATE
@@ -289,13 +289,17 @@ describe('application logic', () => {
 
     describe('CalculateCoords', () => {
 
-        it('sets the correct positions for nodes', () => {
+        it('positions nodes into centered rows', () => {
             const data = nodes.MakeBase(List.of(
                 nodes.MakeScene(1, "startup", List.of(
+
+                    // ROW 0
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
                     )),
+
+                    // ROW 1
                     nodes.MakeNode(3, "node_3", List.of(
                         nodes.MakeGoto(5),
                         nodes.MakeGoto(6)
@@ -304,51 +308,201 @@ describe('application logic', () => {
                         nodes.MakeGoto(7),
                         nodes.MakeGoto(8)
                     )),
+
+                    // ROW 2
                     nodes.MakeNode(5, "node_5", List.of(
                         nodes.MakeGoto(9)
                     )),
                     nodes.MakeNode(6, "node_6", null),
-                    nodes.MakeNode(7, "node_7", List.of(
-                        nodes.MakeGoto(9)
+                    nodes.MakeNode(7, "node_7", null),
+                    nodes.MakeNode(8, "node_8", List.of(
+                        nodes.MakeGoto(10)
                     )),
-                    nodes.MakeNode(8, "node_8", null),
-                    nodes.MakeNode(9, "node_9", null)
+
+                    // ROW 3
+                    nodes.MakeNode(9, "node_9", List.of(
+                        nodes.MakeGoto(11)
+                    )),
+                    nodes.MakeNode(10, "node_10", List.of(
+                        nodes.MakeGoto(11)
+                    )),
+
+                    // ROW 4 (multiple parents)
+                    nodes.MakeNode(11, "node_11", null)
                 )))
             );
+
             const width = 50;
             const height = 50;
             const expected = nodes.MakeBase(List.of(
                 nodes.MakeScene(1, "startup", List.of(
+
+                    // ROW 0
                     nodes.MakeNode(2, "start", List.of(
                         nodes.MakeGoto(3),
                         nodes.MakeGoto(4)
-                    ), Math.round(2 * width), 0),
+                    ), Math.round((4 / 2) * width), 0),
 
+                    // ROW 1
                     nodes.MakeNode(3, "node_3", List.of(
                         nodes.MakeGoto(5),
                         nodes.MakeGoto(6)
-                    ), Math.round(7 / 3 * width), Math.round(height)),
+                    ), Math.round((4 / 3) * width), height),
                     nodes.MakeNode(4, "node_4", List.of(
                         nodes.MakeGoto(7),
                         nodes.MakeGoto(8)
-                    ), Math.round((4 / 3) * width), Math.round(height)),
+                    ), Math.round((1 + 4 / 3) * width), height),
 
+                    // ROW 2
                     nodes.MakeNode(5, "node_5", List.of(
                         nodes.MakeGoto(9)
-                    ), (-2 - 1) * width, 2 * height),
-                    nodes.MakeNode(6, "node_6", null, (-2 + 1) * width, 2 * height),
+                    ), Math.round((4 / 5) * width), 2 * height),
+                    nodes.MakeNode(6, "node_6", null, Math.round((1 + 4 / 5) * width), 2 * height),
+                    nodes.MakeNode(7, "node_7", null, Math.round((2 + 4 / 5) * width), 2 * height),
+                    nodes.MakeNode(8, "node_8", List.of(
+                        nodes.MakeGoto(10)
+                    ), Math.round((3 + 4 / 5) * width), 2 * height),
 
-                    nodes.MakeNode(7, "node_7", List.of(
-                        nodes.MakeGoto(9)
-                    ), (2 - 1) * width, 2 * height),
-                    nodes.MakeNode(8, "node_8", null, (2 + 1) * width, 2 * height),
+                    // ROW 3
+                    nodes.MakeNode(9, "node_9", List.of(
+                        nodes.MakeGoto(11)
+                    ), Math.round((4 / 3) * width), 3 * height),
+                    nodes.MakeNode(10, "node_10", List.of(
+                        nodes.MakeGoto(11)
+                    ), Math.round((1 + 4 / 3) * width), 3 * height),
 
-                    nodes.MakeNode(9, "node_9", null, ((-3 + 1) / 2) * width, 3 * height)
-                ))));
+                    // ROW 4 (multiple parents)
+                    nodes.MakeNode(11, "node_11", null, Math.round((4 / 2) * width), 4 * height)
+                )))
+            );
 
             const result = CalculateCoords(data, width, height);
             expect(result).to.equal(expected);
         });
+
+        it('positions children with multiple parents below the lowest parent', () => {
+            const data = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    )),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    )),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", null)
+                ))
+            ));
+
+            const width = 50;
+            const height = 50;
+            const expected = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    ), Math.round((2 / 2) * width), 0),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    ), Math.round((2 / 3) * width), height),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    ), Math.round((1 + 2 / 3) * width), height),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    ), Math.round((2 / 2) * width), 2 * height),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", null, Math.round((2 / 2) * width), 3 * height)
+                ))
+            ));
+
+            const result = CalculateCoords(data, width, height);
+            expect(result).to.equal(expected);
+        });
+
+        it('ignores loops in children with multiple parents', () => {});
+
+        // it('sets the correct positions for nodes', () => {
+        //     const data = nodes.MakeBase(List.of(
+        //         nodes.MakeScene(1, "startup", List.of(
+        //             nodes.MakeNode(2, "start", List.of(
+        //                 nodes.MakeGoto(3),
+        //                 nodes.MakeGoto(4)
+        //             )),
+        //             nodes.MakeNode(3, "node_3", List.of(
+        //                 nodes.MakeGoto(5),
+        //                 nodes.MakeGoto(6)
+        //             )),
+        //             nodes.MakeNode(4, "node_4", List.of(
+        //                 nodes.MakeGoto(7),
+        //                 nodes.MakeGoto(8)
+        //             )),
+        //             nodes.MakeNode(5, "node_5", List.of(
+        //                 nodes.MakeGoto(9)
+        //             )),
+        //             nodes.MakeNode(6, "node_6", null),
+        //             nodes.MakeNode(7, "node_7", List.of(
+        //                 nodes.MakeGoto(9)
+        //             )),
+        //             nodes.MakeNode(8, "node_8", null),
+        //             nodes.MakeNode(9, "node_9", null)
+        //         )))
+        //     );
+        //     const width = 50;
+        //     const height = 50;
+        //     const expected = nodes.MakeBase(List.of(
+        //         nodes.MakeScene(1, "startup", List.of(
+        //             nodes.MakeNode(2, "start", List.of(
+        //                 nodes.MakeGoto(3),
+        //                 nodes.MakeGoto(4)
+        //             ), Math.round((4 / 2) * width), 0),
+        //
+        //             nodes.MakeNode(3, "node_3", List.of(
+        //                 nodes.MakeGoto(5),
+        //                 nodes.MakeGoto(6)
+        //             ), Math.round((4 / 3) * width), Math.round(height)),
+        //             nodes.MakeNode(4, "node_4", List.of(
+        //                 nodes.MakeGoto(7),
+        //                 nodes.MakeGoto(8)
+        //             ), Math.round((1 + 4 / 3) * width), Math.round(height)),
+        //
+        //             nodes.MakeNode(5, "node_5", List.of(
+        //                 nodes.MakeGoto(9)
+        //             ), Math.round((4 / 5) * width), Math.round(2 * height)),
+        //             nodes.MakeNode(6, "node_6", null,
+        //                 Math.round((1 + 4 / 5) * width), Math.round(2 * height)),
+        //
+        //             nodes.MakeNode(7, "node_7", List.of(
+        //                 nodes.MakeGoto(9)
+        //             ), Math.round((2 + 4 / 5) * width), Math.round(2 * height)),
+        //             nodes.MakeNode(8, "node_8", null,
+        //                 Math.round((3 + 4 / 5) * width), Math.round(2 * height)),
+        //
+        //             nodes.MakeNode(9, "node_9", null, Math.round((4 / 2) * width), Math.round(3 * height))
+        //         ))));
+        //
+        //     const result = CalculateCoords(data, width, height);
+        //     expect(result).to.equal(expected);
+        // });
 
     });
 

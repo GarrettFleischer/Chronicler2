@@ -105,18 +105,46 @@ export function CalculateCoords(state, colWidth, rowHeight) {
         const startNode = scene.get('Nodes').get(0);
 
         let rows = BuildRows(state, startNode.get('Id'));
-        const width = MaxWidth(rows);
+        const maxWidth = MaxWidth(rows);
 
         rows.forEach((row, y) => {
+            const offset = maxWidth / (row.size + 1);
             row.forEach((id, x) => {
                 const path = FindPathToId(state, id);
-                newState = newState.setIn(path.push('X'), Math.round((x + (width / (row.size + 1))) * colWidth));
+                newState = newState.setIn(path.push('X'), Math.round((x + offset) * colWidth));
                 newState = newState.setIn(path.push('Y'), Math.round(y * rowHeight));
             });
         });
     });
 
     return newState;
+}
+
+/**
+ * @return {boolean}
+ */
+export function ContainsLoop(state, id) {
+    let stack = Stack.of(id);
+    let visited = List();
+
+    while (stack.size) {
+        const top = stack.peek();
+        stack = stack.pop();
+
+        if(!visited.contains(top)) {
+            visited = visited.push(top);
+
+            const children = FindChildren(state, top);
+            children.forEach((child) => {
+                if (child.get('Id') === id)
+                    return true;
+
+                stack = stack.push(child.get('Id'));
+            });
+        }
+    }
+
+    return false;
 }
 
 function BuildRows(state, id) {
@@ -138,9 +166,9 @@ function BuildRows(state, id) {
             rows = rows.set(top.Row, currentRow);
 
             const children = FindChildren(state, top.Id);
-            children.forEach((child) => {
-                stack = stack.push({Id: child.get('Id'), Row: top.Row + 1});
-            });
+            for (let i = children.size - 1; i >= 0; --i) {
+                stack = stack.push({Id: children.get(i).get('Id'), Row: top.Row + 1});
+            }
         }
     }
 
@@ -165,30 +193,31 @@ function HandleMultipleParents(state, rows) {
                 // ignore this node if already processed
                 if (!visited.contains(currentId)) {
                     visited = visited.push(currentId);
-                    // calc max parent row + 1
-                    const parents = FindParents(state, currentId);
-                    let newY = y;
-                    parents.forEach((parent) => {
-                        if (parent.get('Id') !== currentId)
-                            newY = Math.max(newY, RowOf(newRows, parent.get('Id')));
-                    });
-                    newY += 1;
 
-                    if (newY !== y) {
-                        done = false;
-                        while (newY >= newRows.size) newRows = newRows.push(List());
-                        let newRow = newRows.get(newY).push(currentId);
-                        row = row.delete(x);
-                        newRows = newRows.set(y, row);
-                        newRows = newRows.set(newY, newRow);
+                    if (!ContainsLoop(state, currentId)) {
+                        // calc max parent row + 1
+                        const parents = FindParents(state, currentId);
+                        let newY = y;
+                        parents.forEach((parent) => {
+                            if (parent.get('Id') !== currentId)
+                                newY = Math.max(newY, RowOf(newRows, parent.get('Id')) + 1);
+                        });
+
+                        if (newY !== y) {
+                            done = false;
+                            while (newY >= newRows.size) newRows = newRows.push(List());
+                            let newRow = newRows.get(newY).push(currentId);
+                            row = row.delete(x);
+                            newRows = newRows.set(y, row);
+                            newRows = newRows.set(newY, newRow);
+                        }
                     }
                 }
             }
         }
     }
 
-
-    return rows;
+    return newRows;
 }
 
 /**
@@ -218,20 +247,7 @@ function MaxWidth(rows) {
     return width;
 }
 
-// /**
-//  * @return {boolean}
-//  */
-// function ContainsLoop(state, id, substate = null, visited = List()) {
-//     const children = FindChildren(state, substate ? substate.get('Id') : id);
-//     children.forEach((child) => {
-//         if(child.get('Id') === id)
-//             return true;
-//         if(!visited.contains(substate.get('Id')))
-//             return ContainsLoop(state, id, child, visited.push(substate.get('Id')));
-//     });
-//
-//     return false;
-// }
+
 //
 // /**
 //  * @return {number}
