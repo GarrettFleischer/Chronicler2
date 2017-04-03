@@ -131,16 +131,16 @@ export function ContainsLoop(state, id) {
         const top = stack.peek();
         stack = stack.pop();
 
-        if(!visited.contains(top)) {
+        if (!visited.contains(top)) {
             visited = visited.push(top);
 
             const children = FindChildren(state, top);
-            children.forEach((child) => {
-                if (child.get('Id') === id)
+            for (let i = 0; i < children.size; ++i) {
+                if (children.getIn([i, 'Id']) === id)
                     return true;
 
-                stack = stack.push(child.get('Id'));
-            });
+                stack = stack.push(children.getIn([i, 'Id']));
+            }
         }
     }
 
@@ -194,7 +194,7 @@ function HandleMultipleParents(state, rows) {
                 if (!visited.contains(currentId)) {
                     visited = visited.push(currentId);
 
-                    if (!ContainsLoop(state, currentId)) {
+                    // if (!ContainsLoop(state, currentId)) {
                         // calc max parent row + 1
                         const parents = FindParents(state, currentId);
                         let newY = y;
@@ -211,7 +211,7 @@ function HandleMultipleParents(state, rows) {
                             newRows = newRows.set(y, row);
                             newRows = newRows.set(newY, newRow);
                         }
-                    }
+                    // }
                 }
             }
         }

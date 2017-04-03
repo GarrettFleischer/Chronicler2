@@ -439,8 +439,6 @@ describe('application logic', () => {
             expect(result).to.equal(expected);
         });
 
-        it('ignores loops in children with multiple parents', () => {});
-
         // it('sets the correct positions for nodes', () => {
         //     const data = nodes.MakeBase(List.of(
         //         nodes.MakeScene(1, "startup", List.of(
@@ -504,6 +502,76 @@ describe('application logic', () => {
         //     expect(result).to.equal(expected);
         // });
 
+    });
+
+    describe('ContainsLoop', () => {
+        
+        it('returns false when there is no loop back to the given id', () => {
+            const data = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    )),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    )),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", List.of(
+                        nodes.MakeGoto(3)
+                    ))
+                ))
+            ));
+
+            const result = ContainsLoop(data, 4);
+            expect(result).to.equal(false);
+        });
+        
+        it('returns true when there is a loop back to the given id', () => {
+            const data = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    )),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    )),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", List.of(
+                        nodes.MakeNextAction(null, 2)
+                    ))
+                ))
+            ));
+
+            const result = ContainsLoop(data, 4);
+            expect(result).to.equal(true);
+        });
+        
     });
 
 });
