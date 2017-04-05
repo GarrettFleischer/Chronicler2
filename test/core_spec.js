@@ -1,7 +1,7 @@
 import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {FindPathToId, FindById, FindParents, FindChildren, FindSceneContainingId, CalculateCoords, ContainsLoop} from '../src/core';
+import {FindPathToId, FindById, FindParents, FindChildren, FindSceneContainingId, UpdateNodePositions, ContainsLoop} from '../src/core';
 const nodes = require('../src/nodes');
 
 // TODO don't use INITIAL_STATE
@@ -289,7 +289,7 @@ describe('application logic', () => {
 
     });
 
-    describe('CalculateCoords', () => {
+    describe('UpdateNodePositions', () => {
 
         it('positions nodes into centered rows', () => {
             const data = nodes.MakeBase(List.of(
@@ -378,7 +378,7 @@ describe('application logic', () => {
                 )))
             );
 
-            const result = CalculateCoords(data, width, height);
+            const result = UpdateNodePositions(data, width, height);
             expect(result).to.equal(expected);
         });
 
@@ -437,7 +437,70 @@ describe('application logic', () => {
                 ))
             ));
 
-            const result = CalculateCoords(data, width, height);
+            const result = UpdateNodePositions(data, width, height);
+            expect(result).to.equal(expected);
+        });
+
+        it('only positions the lowest child below the lowest parent', () => {
+            const data = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    )),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    )),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    )),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", List.of(
+                        nodes.MakeGoto(3)
+                    ))
+                ))
+            ));
+
+            const width = 50;
+            const height = 50;
+            const expected = nodes.MakeBase(List.of(
+                nodes.MakeScene(1, "startup", List.of(
+                    // ROW 0
+                    nodes.MakeNode(2, "start", List.of(
+                        nodes.MakeGoto(3),
+                        nodes.MakeGoto(4)
+                    ), Math.round((2 / 2) * width), 0),
+
+                    // ROW 1
+                    nodes.MakeNode(3, "node_3", List.of(
+                        nodes.MakeGoto(6)
+                    ), Math.round((2 / 3) * width), Math.round(height)),
+                    nodes.MakeNode(4, "node_4", List.of(
+                        nodes.MakeGoto(5)
+                    ), Math.round((1 + 2 / 3) * width), Math.round(height)),
+
+                    // ROW 2
+                    nodes.MakeNode(5, "node_5", List.of(
+                        nodes.MakeGoto(6)
+                    ), Math.round((2 / 2) * width), Math.round(2 * height)),
+
+                    // ROW 3
+                    nodes.MakeNode(6, "node_6", List.of(
+                        nodes.MakeGoto(3)
+                    ), Math.round((2 / 2) * width), Math.round(3 * height))
+                ))
+            ));
+
+            const result = UpdateNodePositions(data, width, height);
             expect(result).to.equal(expected);
         });
 
@@ -500,7 +563,7 @@ describe('application logic', () => {
         //             nodes.MakeNode(9, "node_9", null, Math.round((4 / 2) * width), Math.round(3 * height))
         //         ))));
         //
-        //     const result = CalculateCoords(data, width, height);
+        //     const result = UpdateNodePositions(data, width, height);
         //     expect(result).to.equal(expected);
         // });
 
@@ -575,5 +638,75 @@ describe('application logic', () => {
         });
         
     });
+    
+    // describe('IsBelow', () => {
+    //
+    //     it('returns true when childId is a grandchild of parentId', () => {
+    //         const data = nodes.MakeBase(List.of(
+    //             nodes.MakeScene(1, "startup", List.of(
+    //                 // ROW 0
+    //                 nodes.MakeNode(2, "start", List.of(
+    //                     nodes.MakeGoto(3),
+    //                     nodes.MakeGoto(4)
+    //                 )),
+    //
+    //                 // ROW 1
+    //                 nodes.MakeNode(3, "node_3", List.of(
+    //                     nodes.MakeGoto(6)
+    //                 )),
+    //                 nodes.MakeNode(4, "node_4", List.of(
+    //                     nodes.MakeGoto(5)
+    //                 )),
+    //
+    //                 // ROW 2
+    //                 nodes.MakeNode(5, "node_5", List.of(
+    //                     nodes.MakeGoto(6)
+    //                 )),
+    //
+    //                 // ROW 3
+    //                 nodes.MakeNode(6, "node_6", List.of(
+    //                     nodes.MakeGoto(3)
+    //                 ))
+    //             ))
+    //         ));
+    //
+    //         const result = IsBelow(6, 3);
+    //         expect(result).to.equal(true);
+    //     });
+    //
+    //     it('returns false when childId is not a grandchild of parentId', () => {
+    //         const data = nodes.MakeBase(List.of(
+    //             nodes.MakeScene(1, "startup", List.of(
+    //                 // ROW 0
+    //                 nodes.MakeNode(2, "start", List.of(
+    //                     nodes.MakeGoto(3),
+    //                     nodes.MakeGoto(4)
+    //                 )),
+    //
+    //                 // ROW 1
+    //                 nodes.MakeNode(3, "node_3", List.of(
+    //                     nodes.MakeGoto(6)
+    //                 )),
+    //                 nodes.MakeNode(4, "node_4", List.of(
+    //                     nodes.MakeGoto(5)
+    //                 )),
+    //
+    //                 // ROW 2
+    //                 nodes.MakeNode(5, "node_5", List.of(
+    //                     nodes.MakeGoto(6)
+    //                 )),
+    //
+    //                 // ROW 3
+    //                 nodes.MakeNode(6, "node_6", List.of(
+    //                     nodes.MakeGoto(3)
+    //                 ))
+    //             ))
+    //         ));
+    //
+    //         const result = IsBelow(3, 6);
+    //         expect(result).to.equal(false);
+    //     });
+    //
+    // });
 
 });

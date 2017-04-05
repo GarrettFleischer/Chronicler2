@@ -98,7 +98,7 @@ export function FindSceneContainingId(state, id) {
     return found;
 }
 
-export function CalculateCoords(state, colWidth, rowHeight) {
+export function UpdateNodePositions(state, colWidth, rowHeight) {
     let newState = state;
 
     newState.get('Scenes').forEach((scene) => {
@@ -149,7 +149,7 @@ export function ContainsLoop(state, nodeId) {
     return false;
 }
 
-// Helper function for CalculateCoords
+// Helper function for UpdateNodePositions
 function BuildRows(state, nodeId) {
     let rows = List();
 
@@ -203,7 +203,8 @@ function HandleMultipleParents(state, rows) {
                         const parents = FindParents(state, currentId);
                         let newY = y;
                         parents.forEach((parent) => {
-                            if (parent.get('Id') !== currentId)
+                            const below = IsBelow(newRows, currentId, parent.get('Id'));
+                            if (parent.get('Id') !== currentId && below)
                                 newY = Math.max(newY, RowOf(newRows, parent.get('Id')) + 1);
                         });
 
@@ -222,6 +223,24 @@ function HandleMultipleParents(state, rows) {
     }
 
     return newRows;
+}
+
+/**
+ * @return {boolean}
+ */
+function IsBelow(rows, childId, parentId) {
+    for (let y = 0; y < rows.size; ++y) {
+        const row = rows.get(y);
+        let potential = false;
+        for (let x = 0; x < row.size; ++x) {
+            const id = row.get(x);
+            if(id === parentId) potential = true;
+            if(id === childId && !potential) return false;
+        }
+        if(potential) return true;
+    }
+
+    return false;
 }
 
 // Helper function for BuildRows
